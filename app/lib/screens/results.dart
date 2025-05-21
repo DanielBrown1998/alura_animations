@@ -102,7 +102,7 @@ class _ListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return OpenContainer(
       transitionDuration: const Duration(milliseconds: 300),
-      
+      closedColor: Colors.transparent,
       closedBuilder: (context, action) {
         return ListTile(
           contentPadding:
@@ -120,6 +120,7 @@ class _ListTile extends StatelessWidget {
         );
       },
       openBuilder: (context, action) => Details(entry: entry),
+      openColor: Colors.transparent,
       transitionType: ContainerTransitionType.fade,
     );
   }
