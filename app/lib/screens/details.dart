@@ -49,10 +49,13 @@ class Details extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16.0),
-                    child: Image(
-                      image: NetworkImage(entry.image),
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+                    child: Hero(
+                      tag: "${entry.id}-${entry.name}",
+                      child: Image(
+                        image: NetworkImage(entry.image),
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
