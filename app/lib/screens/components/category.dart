@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:hyrule/controllers/api_controller.dart';
 import 'package:hyrule/screens/results.dart';
@@ -5,15 +6,52 @@ import 'package:hyrule/utils/consts/categories.dart';
 
 import '../../domain/models/entry.dart';
 
-class Category extends StatelessWidget {
-  Category({Key? key, required this.category}) : super(key: key);
+class Category extends StatefulWidget {
+  const Category({
+    super.key,
+    required this.category,
+    required this.isHighLight,
+  });
   final String category;
+  final bool isHighLight;
+  @override
+  State<Category> createState() => _CategoryState();
+}
 
+class _CategoryState extends State<Category>
+    with SingleTickerProviderStateMixin {
   final ApiController apiController = ApiController();
 
+  late AnimationController animationController;
+
   Future<List<Entry>> getEntries() async {
-    return await apiController.getEntriesByCategory(category: category);
+    return await apiController.getEntriesByCategory(category: widget.category);
   }
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 1000),
+        lowerBound: 0.8,
+        upperBound: 1.0);
+    if (widget.isHighLight) {
+      animationController.repeat(
+        reverse: true,
+        period: const Duration(milliseconds: 1000),
+      );
+    } else {
+      animationController.animateTo(1);
+    }
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -25,28 +63,36 @@ class Category extends StatelessWidget {
               await getEntries().then((value) => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => Results(entries: value, category: category))));
+                      builder: (context) =>
+                          Results(entries: value, category: widget.category))));
             },
             borderRadius: BorderRadius.circular(16.0),
             child: Ink(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16.0),
-                  border: Border.all(width: 2.0, color: const Color(0xFF0079CF)),
+                  border:
+                      Border.all(width: 2.0, color: const Color(0xFF0079CF)),
                   boxShadow: [
                     BoxShadow(
                         blurRadius: 6.0,
                         color: const Color(0xFF0079CF).withOpacity(0.2),
                         blurStyle: BlurStyle.outer),
                   ]),
-              child: Center(
-                child: Image.asset("$imagePath$category.png"),
+              child: ScaleTransition(
+                alignment: Alignment.center,
+                filterQuality: FilterQuality.medium,
+                scale: animationController,
+                child: Center(
+                  child: Image.asset("$imagePath${widget.category}.png",
+                      fit: BoxFit.fitHeight),
+                ),
               ),
             ),
           ),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 10.0),
-          child: Text(categories[category]!,
+          child: Text(categories[widget.category]!,
               style: Theme.of(context)
                   .textTheme
                   .titleLarge!

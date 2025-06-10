@@ -4,23 +4,25 @@ import 'package:hyrule/screens/favorites.dart';
 import 'package:hyrule/utils/consts/categories.dart';
 
 class Categories extends StatelessWidget {
-const Categories({ Key? key }) : super(key: key);
+  const Categories({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Escolha uma categoria"),
           centerTitle: true,
           actions: [
-            IconButton(onPressed: (){
+            IconButton(
+                onPressed: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => Favorites(),
                       ));
-            }, icon: const Icon(Icons.bookmark))
+                },
+                icon: const Icon(Icons.bookmark))
           ],
         ),
         body: Padding(
@@ -32,9 +34,12 @@ const Categories({ Key? key }) : super(key: key);
               mainAxisSpacing: 16,
               mainAxisExtent: 193,
             ),
-            children: 
-              categories.keys.map((e) => Category(category: e)).toList()
-            ,
+            children: categories.keys
+                .map((e) => Category(
+                      category: e,
+                      isHighLight: (e == "creatures"),
+                    ))
+                .toList(),
           ),
         ),
       ),
