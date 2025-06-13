@@ -8,7 +8,8 @@ class DataApi {
 
   Future<List<Entry>> getEntriesByCategory({required String category}) async {
     final response = await dio.get(url + category);
-    entries = List<Entry>.from(response.data["data"].map((e) => Entry.fromMap(e)));
+    entries =
+        List<Entry>.from(response.data["data"].map((e) => Entry.fromMap(e)));
     return entries;
   }
 }

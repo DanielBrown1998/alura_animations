@@ -1,6 +1,5 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:hyrule/controllers/api_controller.dart';
 import 'package:hyrule/domain/models/entry.dart';
 import 'package:hyrule/screens/components/entry_card.dart';
 import 'package:hyrule/screens/details.dart';
@@ -18,7 +17,6 @@ class Results extends StatefulWidget {
 }
 
 class _ResultsState extends State<Results> {
-  final ApiController apiController = ApiController();
 
   bool cardView = true;
 
