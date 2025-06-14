@@ -18,12 +18,11 @@ class Category extends StatefulWidget {
   State<Category> createState() => _CategoryState();
 }
 
-class _CategoryState extends State<Category>
-    with SingleTickerProviderStateMixin {
+class _CategoryState extends State<Category> with TickerProviderStateMixin {
   final ApiController apiController = ApiController();
 
-  late AnimationController animationController;
-
+  late AnimationController scaleAnimationController;
+  late AnimationController imageColorAnimationController;
   Future<List<Entry>> getEntries() async {
     return await apiController.getEntriesByCategory(category: widget.category);
   }
@@ -31,27 +30,35 @@ class _CategoryState extends State<Category>
   @override
   void initState() {
     super.initState();
-    animationController = AnimationController(
+    scaleAnimationController = AnimationController(
         vsync: this,
         duration: const Duration(milliseconds: 1000),
         lowerBound: 0.8,
         upperBound: 1.0);
+    imageColorAnimationController = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 1000),
+        lowerBound: 0,
+        upperBound: 1);
     if (widget.isHighLight) {
-      animationController.repeat(
+      scaleAnimationController.repeat(
         reverse: true,
-        period: const Duration(milliseconds: 1000),
+      );
+      imageColorAnimationController.repeat(
+        reverse: true,
       );
     } else {
-      animationController.animateTo(1);
+      scaleAnimationController.animateTo(1);
+      imageColorAnimationController.animateTo(0);
     }
   }
 
   @override
   void dispose() {
-    animationController.dispose();
+    scaleAnimationController.dispose();
+    imageColorAnimationController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -81,10 +88,23 @@ class _CategoryState extends State<Category>
               child: ScaleTransition(
                 alignment: Alignment.center,
                 filterQuality: FilterQuality.medium,
-                scale: animationController,
-                child: Center(
-                  child: Image.asset("$imagePath${widget.category}.png",
-                      fit: BoxFit.fitHeight),
+                scale: scaleAnimationController,
+                child: AnimatedBuilder(
+                  animation: imageColorAnimationController,
+                  builder: (context, child) => Center(
+                    child: Image.asset(
+                      "$imagePath${widget.category}.png",
+                      fit: BoxFit.fitHeight,
+                      color: Color.fromARGB(
+                          255,
+                          255,
+                          255,
+                          (255 *
+                                  (imageColorAnimationController.value - 1)
+                                      .abs())
+                              .floor()),
+                    ),
+                  ),
                 ),
               ),
             ),
